@@ -15,7 +15,7 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #888;
   text-decoration: inherit;
 }
 a:hover {
@@ -58,10 +58,14 @@ body {
 
 .link-me {
   color: #888;
+  font-size: 14px;
   position: absolute;
   bottom: 0;
   right: 50%;
   transform: translate(50%, 0%);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
 }
 
 @media (prefers-color-scheme: light) {

@@ -41,6 +41,12 @@ function createModels(_scene) {
         })
     });
 
+    /*
+Author: Karol Miklas (https://sketchfab.com/karolmiklas)
+License: CC-BY-SA-4.0 (http://creativecommons.org/licenses/by-sa/4.0/)
+Source: https://sketchfab.com/3d-models/free-porsche-911-carrera-4s-d01b254483794de3819786d93e0e1ebf
+Title: (FREE) Porsche 911 Carrera 4S
+*/
     // 加载器解析模型
     gltfLoader.load(import.meta.env.BASE_URL + '911-draco.glb',
         (glb) => {
@@ -77,25 +83,25 @@ function updateAllMaterials() {
 
             // console.log(child.material.name)
 
-            if(child.material.name === 'rubber'){
+            if (child.material.name === 'rubber') {
                 child.material.color.set('#222')
                 child.material.roughness = 1
-                child.material.normalScale.set(4,4)
+                child.material.normalScale.set(4, 4)
                 child.material.envMap = scene.userData.dynamicMap
             }
-            if(child.material.name === 'window'){
+            if (child.material.name === 'window') {
                 child.material.color.set('#222')
                 child.material.roughness = 0
                 child.material.clearcoat = 0.1
                 child.material.envMap = scene.userData.dynamicMap
             }
-            if(child.material.name === 'coat'){
+            if (child.material.name === 'coat') {
                 child.material.envMapIntensity = 4
                 child.material.roughness = 0.5
                 child.material.metalness = 1
                 child.material.envMap = scene.userData.dynamicMap
             }
-            if(child.material.name === 'paint'){
+            if (child.material.name === 'paint') {
                 child.material.envMapIntensity = 2
                 child.material.roughness = 0.45
                 child.material.metalness = 0.8
