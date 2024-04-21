@@ -1,7 +1,11 @@
 import { gui, debugObject } from '../system/gui'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
+import { ReflectorForSSRPass } from "three/examples/jsm/objects/ReflectorForSSRPass";
+import { ssrPass } from '../base/composer';
 import * as THREE from 'three'
+import { SSRPass } from 'three/examples/jsm/postprocessing/SSRPass';
+import isMobileDevice from '../utils/deviceType';
 
 let scene = new THREE.Scene()
 const loadingManager = new THREE.LoadingManager(
@@ -61,6 +65,7 @@ Title: (FREE) Porsche 911 Carrera 4S
             carModel.name = "911"
             carModel.add(positionalAudio)
             scene.add(carModel)
+            carModel.position.y += 0.63
 
             console.log('carModel', carModel)
             updateAllMaterials()
@@ -83,14 +88,42 @@ Title: (FREE) Porsche 911 Carrera 4S
     ground.layers.enable(scene.userData.rtCubeCameraLayer)
     ground.receiveShadow = true
     ground.rotation.set(-Math.PI * 0.5, 0, 0)
-    ground.position.set(0, -0.63, 0)
+    ground.position.set(0, 0, 0)
     scene.add(ground)
+
+    let isUseDepthTexture = true
+    if (isMobileDevice()) {
+        isUseDepthTexture = false
+    }
+    const groundReflector = new ReflectorForSSRPass(new THREE.PlaneGeometry(5, 6), {
+        clipBias: 0.0003,
+        textureWidth: window.innerWidth,
+        textureHeight: window.innerHeight,
+        color: 0x888888,
+        useDepthTexture: isUseDepthTexture,
+    });
+    groundReflector.material.depthWrite = true;
+    groundReflector.rotation.set(- Math.PI * 0.5, 0, 0);
+    groundReflector.position.set(0, 0.01, 0)
+    groundReflector.visible = false;
+    ssrPass.groundReflector = groundReflector
+    scene.add(groundReflector);
+    // setting
+    ground.renderOrder = 1
+    groundReflector.renderOrder = 2
+    groundReflector.fresnel = ssrPass.fresnel = true;
+    groundReflector.distanceAttenuation = ssrPass.distanceAttenuation = true;
+    ssrPass.maxDistance = 1.3;
+    groundReflector.maxDistance = ssrPass.maxDistance;
+    ssrPass.opacity = 0.55;
+    groundReflector.opacity = ssrPass.opacity;
 
     // debug
     debugObject.paintColor = '#b3b3ff'
     gui.addColor(debugObject, 'paintColor').onChange(() => {
         updateAllMaterials()
     })
+    gui.add(ground, 'visible').name('Ground Visible')
     // gui.add(ground.position, 'y').min(-10).max(10).step(0.001).name('Ground Y')
     // gui.addColor(ground.material, 'color').name('Ground Color')
     // gui.add(ground.material, 'roughness').min(0).max(1).step(0.001).name('Ground Roughness')
@@ -109,6 +142,7 @@ function updateAllMaterials() {
             child.receiveShadow = true
             // child.material.envMap = TEXTURE.envMap
             child.material.envMap = scene.userData.dynamicMap
+            // ssrPass.selects.push(child)
 
             // console.log(child.material.name)
 

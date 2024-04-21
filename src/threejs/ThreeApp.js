@@ -5,13 +5,14 @@ import { createCamera } from "./base/camera"
 import { createScene } from "./base/scene"
 import { createCube } from "./base/cube"
 import { createRenderer } from "./base/renderer"
-// import { createComposer } from "./base/composer"
+import { initComposer } from "./base/composer"
 import { createControl } from "./base/control"
 import { createLight } from "./base/light"
 import { createModels } from "./main/model"
 import { disposeTexture } from "./texture"
 import { createDynamicEnv } from "./main/dynamicEnv"
 import { gui } from "./system/gui"
+import isMobileDevice from "./utils/deviceType"
 
 const vector3 = new THREE.Vector3()
 
@@ -37,6 +38,21 @@ class ThreeApp {
         // stats.dom.style.display = 'none'
         this.stats = stats
 
+        this.isAllowComposer = true
+
+        if (isMobileDevice()) {
+            alert("当前设备可能不支持SSR效果，建议使用PC端进行浏览。")
+            this.isAllowComposer = false
+        }
+        gui.add(this, "isAllowComposer").name("SSR-enabled").onChange(v => {
+            if (v && isMobileDevice()) {
+                if (confirm("您的设备暂不完全支持SSR效果，强制开启可能导致画面出现异常，是否继续？"))
+                    this.isAllowComposer = true
+                else
+                    this.isAllowComposer = false
+            }
+        })
+
         // console.log(container)
         console.log("场景初始化")
         // 相机 camera
@@ -51,7 +67,7 @@ class ThreeApp {
         // 渲染器 renderer
         this.renderer = createRenderer(container)
         // 后处理渲染器 composer
-        // this.composer = createComposer(this.renderer, this.scene, this.camera)
+        this.composer = initComposer(this.renderer, this.scene, this.camera)
         // 目标渲染
         this.renderTarget = new THREE.WebGLCubeRenderTarget(256)
         this.renderTarget.texture.type = THREE.HalfFloatType
@@ -81,7 +97,7 @@ class ThreeApp {
             // // Update controls
             this.control.update()
 
-            this.camera.position.lerp(vector3.set( 0.05 * Math.sin(elapsedTime), 0,  0.01 * Math.cos(elapsedTime)).add(this.camera.position), 0.05)
+            this.camera.position.lerp(vector3.set(0.05 * Math.sin(elapsedTime), 0, 0.01 * Math.cos(elapsedTime)).add(this.camera.position), 0.05)
 
             // console.log(this.camera.position,this.control.target)
 
@@ -97,8 +113,11 @@ class ThreeApp {
             this.rtCubeCamera.update(this.renderer, this.scene)
 
             // Render
-            this.renderer.render(this.scene, this.camera)
-            // this.composer.render()
+            if (this.isAllowComposer) {
+                this.composer.render()
+            } else {
+                this.renderer.render(this.scene, this.camera)
+            }
 
             // Call tick again on the next frame
             this.tickId = window.requestAnimationFrame(this.tick)
