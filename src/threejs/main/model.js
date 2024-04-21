@@ -8,6 +8,10 @@ const loadingManager = new THREE.LoadingManager(
     // Loaded
     () => {
         console.log('Loaded successfully!')
+        setTimeout(() => {
+            document.querySelector(".loader-container").classList.add("loaded")
+            document.querySelector(".loader").setAttribute("style", "  border-right-color: #0000;")
+        }, 1500);
     },
     // Progress
     (itemUrl, itemsLoaded, itemsTotal) => {
