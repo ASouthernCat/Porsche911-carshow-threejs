@@ -80,6 +80,7 @@ Title: (FREE) Porsche 911 Carrera 4S
             envMapIntensity: 0.8,
         })
     )
+    ground.layers.enable(scene.userData.rtCubeCameraLayer)
     ground.receiveShadow = true
     ground.rotation.set(-Math.PI * 0.5, 0, 0)
     ground.position.set(0, -0.63, 0)

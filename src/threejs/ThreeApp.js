@@ -56,7 +56,7 @@ class ThreeApp {
         this.renderTarget = new THREE.WebGLCubeRenderTarget(256)
         this.renderTarget.texture.type = THREE.HalfFloatType
         this.rtCubeCamera = new THREE.CubeCamera(1, 1000, this.renderTarget)
-        this.rtCubeCamera.layers.enable(1)
+        this.rtCubeCamera.layers.set(1)
         this.scene.userData.rtCubeCameraLayer = 1
         this.scene.userData.dynamicMap = this.renderTarget.texture
         // 场景组成内容 object3D
