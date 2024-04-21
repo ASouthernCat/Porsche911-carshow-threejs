@@ -4,6 +4,7 @@ export function createControl(camera, canvas) {
     control.maxPolarAngle = Math.PI * 0.5
     // control.minPolarAngle = 0.1
     control.minDistance = 4
+    control.maxDistance = 15
     control.screenSpacePanning = false
     control.target.set(0.2, 0, 0.3)
     control.enableDamping = true
