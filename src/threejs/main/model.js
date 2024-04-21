@@ -39,6 +39,9 @@ function createModels(_scene) {
         addEventListener("click", () => {
             !positionalAudio.isPlaying && positionalAudio.play();
         })
+        addEventListener("touchend", () => {
+            !positionalAudio.isPlaying && positionalAudio.play();
+        })
     });
 
     /*
