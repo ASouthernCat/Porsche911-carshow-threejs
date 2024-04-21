@@ -13,6 +13,8 @@ import { disposeTexture } from "./texture"
 import { createDynamicEnv } from "./main/dynamicEnv"
 import { gui } from "./system/gui"
 
+const vector3 = new THREE.Vector3()
+
 class ThreeApp {
 
     static instance
@@ -78,6 +80,8 @@ class ThreeApp {
 
             // // Update controls
             this.control.update()
+
+            this.camera.position.lerp(vector3.set( 0.05 * Math.sin(elapsedTime), 0,  0.01 * Math.cos(elapsedTime)).add(this.camera.position), 0.05)
 
             // console.log(this.camera.position,this.control.target)
 
