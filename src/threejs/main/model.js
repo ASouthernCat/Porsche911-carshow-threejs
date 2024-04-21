@@ -69,11 +69,32 @@ Title: (FREE) Porsche 911 Carrera 4S
         }
     )
 
+    const ground = new THREE.Mesh(
+        new THREE.PlaneGeometry(5, 6),
+        new THREE.MeshStandardMaterial({
+            color: '#7780a6',
+            roughness: 0.2,
+            metalness: 0.8,
+            side: THREE.FrontSide,
+            envMap: scene.userData.dynamicMap,
+            envMapIntensity: 0.8,
+        })
+    )
+    ground.receiveShadow = true
+    ground.rotation.set(-Math.PI * 0.5, 0, 0)
+    ground.position.set(0, -0.63, 0)
+    scene.add(ground)
+
     // debug
     debugObject.paintColor = '#b3b3ff'
     gui.addColor(debugObject, 'paintColor').onChange(() => {
         updateAllMaterials()
     })
+    // gui.add(ground.position, 'y').min(-10).max(10).step(0.001).name('Ground Y')
+    // gui.addColor(ground.material, 'color').name('Ground Color')
+    // gui.add(ground.material, 'roughness').min(0).max(1).step(0.001).name('Ground Roughness')
+    // gui.add(ground.material, 'metalness').min(0).max(1).step(0.001).name('Ground Metalness')
+    // gui.add(ground.material, 'envMapIntensity').min(0).max(10).step(0.001).name('Ground EnvMapIntensity')
 }
 
 /**
@@ -83,8 +104,8 @@ function updateAllMaterials() {
 
     scene.getObjectByName('911').traverse((child) => {
         if (child instanceof THREE.Mesh) {
-            // child.castShadow = true
-            // child.receiveShadow = true
+            child.castShadow = true
+            child.receiveShadow = true
             // child.material.envMap = TEXTURE.envMap
             child.material.envMap = scene.userData.dynamicMap
 
@@ -117,6 +138,9 @@ function updateAllMaterials() {
             }
         }
     })
+
+    // 更新阴影
+    scene.getObjectByProperty('type', 'SpotLight').shadow.needsUpdate = true
 }
 
 export { createModels, updateAllMaterials }
